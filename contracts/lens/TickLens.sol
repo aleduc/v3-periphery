@@ -30,11 +30,13 @@ contract TickLens is ITickLens {
         for (uint256 i = 0; i < 256; i++) {
             if (bitmap & (1 << i) > 0) {
                 int24 populatedTick = ((int24(tickBitmapIndex) << 8) + int24(i)) * tickSpacing;
-                (uint128 liquidityGross, int128 liquidityNet, , , , , , ) = IUniswapV3Pool(pool).ticks(populatedTick);
+                (uint128 liquidityGross, int128 liquidityNet, uint256 feeGrowthOutside0X128, uint256 feeGrowthOutside1X128 , , , , ) = IUniswapV3Pool(pool).ticks(populatedTick);
                 populatedTicks[--numberOfPopulatedTicks] = PopulatedTick({
                     tick: populatedTick,
                     liquidityNet: liquidityNet,
-                    liquidityGross: liquidityGross
+                    liquidityGross: liquidityGross,
+                    feeGrowthOutside0X128: feeGrowthOutside0X128,
+                    feeGrowthOutside1X128: feeGrowthOutside1X128
                 });
             }
         }
